@@ -1,0 +1,192 @@
+<html>
+  <head>
+    <title>Floden Gambling Task (demo)</title>
+    <!-- Import Animation Library -->
+    <link rel="stylesheet" href="lib/material.min.css">
+    <script src="lib/material.min.js"></script>
+    <script src="FlodenTask.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic' type='text/css'>
+    <script>
+      /* Message */
+      msg = `
+      Copyright © 2023 Yao Yiheng. All Rights Reserved
+
+      Prototype implementation of Floden Gambling Task (Floden et. al, 2008)
+      in "Impulsivity and risk-taking behavior in focal frontal lobe lesions".
+      
+      [SPACE] => Begin Trial
+      [R] => Reset Trial
+      [A] => Switch next Trial Condition to ADD
+      [S] => Switch next Trial Condition to SUBTRACT
+      `;
+      console.log(msg);
+
+      // Global Variables
+      let folden_task_metrics_history = {};
+      let folden_task = FlodenTask(false);
+      let folden_task_current_pts_element = null;
+      let folden_task_total_score_element = null;
+      let summary_stats_element = null;
+
+      // Initialize metrics_history with metrics to be emitted.
+      FLODEN_TASK_METRICS.forEach((metric_id) => folden_task_metrics_history[metric_id] = []);
+
+      window.onload = () => {
+        folden_task_current_pts_element = document.getElementById("floden-gui-pts");
+        folden_task_total_score_element = document.getElementById("floden-gui-tot");
+        summary_stats_element = document.getElementById("floden-gui-summary");
+        folden_task.reset();
+        document.body.onkeyup = function(e) {
+          if(e.keyCode == 32) { // SPACE
+            startTrial();
+          }
+          else if (e.keyCode == 82) { // R
+            resetTrial();
+          }
+          else if (e.keyCode == 65) { // A
+            toggleAddTrial();
+          }
+          else if (e.keyCode == 83) { // S
+            toggleSubTrial();
+          }
+        };
+        // Repeated polling events.
+        setInterval(() => {
+          // Poll task and update current score.
+          if (folden_task.has_started === false) {
+            num_cards_shown = 0;
+          }
+          else {
+            num_cards_shown = folden_task.card_array.filter((card) => card.shown).length;
+          }
+          folden_task_current_pts_element.innerHTML = `Points: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
+        }, 200);
+      };
+
+      function startTrial() {
+        folden_task.start();
+      }
+
+      function resetTrial() {
+        folden_task.reset();
+      }
+
+      function toggleAddTrial() {
+        folden_task.is_add_condition = true;
+        folden_task.reset();
+      }
+
+      function toggleSubTrial() {
+        folden_task.is_add_condition = false;
+        folden_task.reset();
+      }
+
+      function submitTrial() {
+        if (folden_task.has_started === false) {
+          console.log("Error: current trial has not yet started.");
+          return;
+        }
+        folden_task.end();
+        folden_task.printMetrics();
+        FLODEN_TASK_METRICS.forEach((metric_id) => 
+            folden_task_metrics_history[metric_id]
+                .push(folden_task.getMetricById(metric_id).value));
+        cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
+        folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
+        summary_stats_element.innerHTML = `Stats:<br>${JSON.stringify(folden_task_metrics_history)}`;
+      }
+
+      function downloadResults() {
+        // Format results into csv.
+        csvContent = "data:text/csv;charset=utf-8," + FLODEN_TASK_METRICS.join(",") + "\n";
+        for (let row=0;row<folden_task_metrics_history[FLODEN_TASK_METRICS[0]].length;row++) {
+          csvContent += FLODEN_TASK_METRICS.map((metric_id) => folden_task_metrics_history[metric_id][row]).join(",") + "\n";
+        }
+        console.log("Attempting to download .csv file:");
+        console.log(csvContent);
+        // Prepare link and initiate download for file.
+        encodedUri = encodeURI(csvContent);
+        link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "folden_gambling_task_results.csv");
+        document.body.appendChild(link);
+        link.click();
+      }
+    </script>
+    <style>
+      .demo-card.mdl-card {
+        width: 100%;
+        height: 100%;
+      }
+      .center-items {
+        justify-content: center;
+      }
+      #floden-gui-submit-btn {
+        font-size: 25;
+        width: 100%;
+        height: 50;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="height:100%;width:100%">
+      <div class="mdl-grid" style="max-height: 20%;">
+        <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points: 0</div>
+        <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
+          Floden Gambling Task (demo)
+        </div>
+        <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total Score: 0</div>
+      </div>
+      <div class="mdl-grid center-items" style="max-height: 60%;">
+        <div class="mdl-cell mdl-cell--2-col">
+          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-0"></div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col">
+          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-1"></div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col">
+          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-2"></div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col">
+          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-3"></div>
+        </div>
+        <div class="mdl-cell mdl-cell--2-col">
+          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-4"></div>
+        </div>
+      </div>
+      <div class="mdl-grid center-items" style="max-height: 20%;">
+        <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center">
+          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-submit-btn" onClick="submitTrial()">Turn Over</button>
+        </div>
+      </div>
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--1-col">
+          <button class="mdl-button mdl-js-button mdl-button--raised" onClick="toggleSubTrial()">-</button>
+        </div>
+        <div class="mdl-cell mdl-cell--1-col mdl-cell--10-offset mdl-typography--text-right">
+          <button class="mdl-button mdl-js-button mdl-button--raised" onClick="toggleAddTrial()">+</button>
+        </div>
+      </div>
+      <div class="mdl-grid center-items">
+        <div class="mdl-cell mdl-cell--2-col">
+          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="startTrial()">Start Trial</button>
+        </div>
+        <div class="mdl-cell mdl-cell--8-col" id="floden-gui-summary">
+          Stats:
+        </div>
+        <div class="mdl-cell mdl-cell--2-col mdl-typography--text-right">
+          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-reset-btn" onClick="resetTrial()">Reset Trial</button>
+        </div>
+      </div>
+      <div class="mdl-grid center-items">
+        <div class="mdl-cell mdl-cell--2-col">
+          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-download-btn" onClick="downloadResults()">Download CSV</button>
+        </div>
+      </div>
+      <div class="mdl-grid center-items">
+        <p>This demo implements the "Gambling Task" as described by Floden et.al, 2008, "Impulsivity and risk-taking behavior in focal frontal lobe lesions". <a href="https://doi.org/10.1016/j.neuropsychologia.2007.07.020" target="_blank">https://doi.org/10.1016/j.neuropsychologia.2007.07.020</a></p>
+      </div>
+    </div>
+  </body>
+</html>
