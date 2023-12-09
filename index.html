@@ -14,6 +14,7 @@
 
       Prototype implementation of Floden Gambling Task (Floden et. al, 2008)
       in "Impulsivity and risk-taking behavior in focal frontal lobe lesions".
+      https://doi.org/10.1016/j.neuropsychologia.2007.07.020
       
       [SPACE] => Begin Trial
       [R] => Reset Trial
@@ -27,7 +28,8 @@
       let folden_task = FlodenTask(false);
       let folden_task_current_pts_element = null;
       let folden_task_total_score_element = null;
-      let summary_stats_element = null;
+      let gui_tab_experiment = null;
+      let gui_tab_instructions = null;
 
       // Initialize metrics_history with metrics to be emitted.
       FLODEN_TASK_METRICS.forEach((metric_id) => folden_task_metrics_history[metric_id] = []);
@@ -35,22 +37,9 @@
       window.onload = () => {
         folden_task_current_pts_element = document.getElementById("floden-gui-pts");
         folden_task_total_score_element = document.getElementById("floden-gui-tot");
-        summary_stats_element = document.getElementById("floden-gui-summary");
+        gui_tab_experiment = document.getElementById("floden-gui-experiment-tab");
+        gui_tab_instructions = document.getElementById("floden-gui-instructions-tab");
         folden_task.reset();
-        document.body.onkeyup = function(e) {
-          if(e.keyCode == 32) { // SPACE
-            startTrial();
-          }
-          else if (e.keyCode == 82) { // R
-            resetTrial();
-          }
-          else if (e.keyCode == 65) { // A
-            toggleAddTrial();
-          }
-          else if (e.keyCode == 83) { // S
-            toggleSubTrial();
-          }
-        };
         // Repeated polling events.
         setInterval(() => {
           // Poll task and update current score.
@@ -82,6 +71,14 @@
         folden_task.reset();
       }
 
+      function moveToInstructionsPanel() {
+        gui_tab_instructions.click();
+      }
+
+      function moveToExperimentPanel() {
+        gui_tab_experiment.click();
+      }
+
       function submitTrial() {
         if (folden_task.has_started === false) {
           console.log("Error: current trial has not yet started.");
@@ -94,7 +91,6 @@
                 .push(folden_task.getMetricById(metric_id).value));
         cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
         folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
-        summary_stats_element.innerHTML = `Stats:<br>${JSON.stringify(folden_task_metrics_history)}`;
       }
 
       function downloadResults() {
@@ -119,73 +115,76 @@
         width: 100%;
         height: 100%;
       }
+      .floden-card {
+      }
       .center-items {
         justify-content: center;
       }
       #floden-gui-submit-btn {
         font-size: 25;
         width: 100%;
-        height: 50;
+        height: 10vh;
+      }
+      #floden-gui-start-btn {
+        font-size: 25;
+        width: 100%;
+        height: 10vh;
+      }
+      #floden-gui-instructions-text {
+        font-size: 18;
+        width: 100%;
       }
     </style>
   </head>
   <body>
-    <div style="height:100%;width:100%">
-      <div class="mdl-grid" style="max-height: 20%;">
-        <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points: 0</div>
-        <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
-          Floden Gambling Task (demo)
-        </div>
-        <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total Score: 0</div>
+    <div class="mdl-tabs mdl-js-tabs">
+      <div class="mdl-tabs__tab-bar" style="display:block;">
+          <a href="#floden-gui-instructions-panel" class="mdl-tabs__tab is-active" id="floden-gui-instructions-tab">Instructions</a>
+          <a href="#floden-gui-experiment-panel" class="mdl-tabs__tab" id="floden-gui-experiment-tab">Experiment Trials</a>
       </div>
-      <div class="mdl-grid center-items" style="max-height: 60%;">
-        <div class="mdl-cell mdl-cell--2-col">
-          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-0"></div>
+
+      <div class="mdl-tabs__panel is-active" id="floden-gui-instructions-panel" style="height: 100%;width: 100%;">
+        <div class="mdl-grid center-items" style="height: 80vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center" id="floden-gui-instructions-text">
+            Hello world, lorem ipsum dolores et.
+          </div>
         </div>
-        <div class="mdl-cell mdl-cell--2-col">
-          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-1"></div>
-        </div>
-        <div class="mdl-cell mdl-cell--2-col">
-          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-2"></div>
-        </div>
-        <div class="mdl-cell mdl-cell--2-col">
-          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-3"></div>
-        </div>
-        <div class="mdl-cell mdl-cell--2-col">
-          <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-4"></div>
+        <div class="mdl-grid center-items" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center" style="padding-top: 0;">
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="startTrialBlock()">Start</button>
+          </div>
         </div>
       </div>
-      <div class="mdl-grid center-items" style="max-height: 20%;">
-        <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center">
-          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-submit-btn" onClick="submitTrial()">Turn Over</button>
+      <div class="mdl-tabs__panel" id="floden-gui-experiment-panel" style="height: 100%;width: 100%">
+        <div class="mdl-grid" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points: 0</div>
+          <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
+            Floden Gambling Task (demo)
+          </div>
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total Score: 0</div>
         </div>
-      </div>
-      <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--1-col">
-          <button class="mdl-button mdl-js-button mdl-button--raised" onClick="toggleSubTrial()">-</button>
+        <div class="mdl-grid center-items" style="height: 50vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--2-col floden-card">
+            <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-0"></div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col floden-card">
+            <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-1"></div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col floden-card">
+            <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-2"></div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col floden-card">
+            <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-3"></div>
+          </div>
+          <div class="mdl-cell mdl-cell--2-col floden-card">
+            <div class="demo-card mdl-card mdl-shadow--2dp" id="floden-card-4"></div>
+          </div>
         </div>
-        <div class="mdl-cell mdl-cell--1-col mdl-cell--10-offset mdl-typography--text-right">
-          <button class="mdl-button mdl-js-button mdl-button--raised" onClick="toggleAddTrial()">+</button>
+        <div class="mdl-grid center-items" style="height: 30vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center" style="padding-top: 10vh;">
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-submit-btn" onClick="submitTrial()">Turn Over</button>
+          </div>
         </div>
-      </div>
-      <div class="mdl-grid center-items">
-        <div class="mdl-cell mdl-cell--2-col">
-          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="startTrial()">Start Trial</button>
-        </div>
-        <div class="mdl-cell mdl-cell--8-col" id="floden-gui-summary">
-          Stats:
-        </div>
-        <div class="mdl-cell mdl-cell--2-col mdl-typography--text-right">
-          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-reset-btn" onClick="resetTrial()">Reset Trial</button>
-        </div>
-      </div>
-      <div class="mdl-grid center-items">
-        <div class="mdl-cell mdl-cell--2-col">
-          <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-download-btn" onClick="downloadResults()">Download CSV</button>
-        </div>
-      </div>
-      <div class="mdl-grid center-items">
-        <p>This demo implements the "Gambling Task" as described by Floden et.al, 2008, "Impulsivity and risk-taking behavior in focal frontal lobe lesions". <a href="https://doi.org/10.1016/j.neuropsychologia.2007.07.020" target="_blank">https://doi.org/10.1016/j.neuropsychologia.2007.07.020</a></p>
       </div>
     </div>
   </body>
