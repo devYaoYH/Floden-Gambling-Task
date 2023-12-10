@@ -1,10 +1,10 @@
 <html>
   <head>
     <title>Floden Gambling Task (demo)</title>
-    <!-- Import Animation Library -->
     <link rel="stylesheet" href="lib/material.min.css">
     <script src="lib/material.min.js"></script>
     <script src="FlodenTask.js"></script>
+    <script src="StateMachine.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic' type='text/css'>
     <script>
@@ -30,6 +30,10 @@
       let folden_task_total_score_element = null;
       let gui_tab_experiment = null;
       let gui_tab_instructions = null;
+      let state_machine = StateMachine(folden_task, {
+        moveToInstruction: moveToInstructionsPanel,
+        moveToExperiment: moveToExperimentPanel,
+      });
 
       // Initialize metrics_history with metrics to be emitted.
       FLODEN_TASK_METRICS.forEach((metric_id) => folden_task_metrics_history[metric_id] = []);
@@ -51,25 +55,8 @@
           }
           folden_task_current_pts_element.innerHTML = `Points: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
         }, 200);
+        state_machine.resetState();
       };
-
-      function startTrial() {
-        folden_task.start();
-      }
-
-      function resetTrial() {
-        folden_task.reset();
-      }
-
-      function toggleAddTrial() {
-        folden_task.is_add_condition = true;
-        folden_task.reset();
-      }
-
-      function toggleSubTrial() {
-        folden_task.is_add_condition = false;
-        folden_task.reset();
-      }
 
       function moveToInstructionsPanel() {
         gui_tab_instructions.click();
@@ -86,6 +73,9 @@
         }
         folden_task.end();
         folden_task.printMetrics();
+        if (folden_task.is_practice) {
+          return;
+        }
         FLODEN_TASK_METRICS.forEach((metric_id) => 
             folden_task_metrics_history[metric_id]
                 .push(folden_task.getMetricById(metric_id).value));
@@ -93,12 +83,17 @@
         folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
       }
 
-      function downloadResults() {
+      function generateCsvContents() {
         // Format results into csv.
         csvContent = "data:text/csv;charset=utf-8," + FLODEN_TASK_METRICS.join(",") + "\n";
         for (let row=0;row<folden_task_metrics_history[FLODEN_TASK_METRICS[0]].length;row++) {
           csvContent += FLODEN_TASK_METRICS.map((metric_id) => folden_task_metrics_history[metric_id][row]).join(",") + "\n";
         }
+        return csvContent;
+      }
+
+      function downloadResults() {
+        csvContent = generateCsvContents();
         console.log("Attempting to download .csv file:");
         console.log(csvContent);
         // Prepare link and initiate download for file.
@@ -131,7 +126,7 @@
         height: 10vh;
       }
       #floden-gui-instructions-text {
-        font-size: 18;
+        font-size: 25;
         width: 100%;
       }
     </style>
@@ -145,13 +140,13 @@
 
       <div class="mdl-tabs__panel" id="floden-gui-instructions-panel" style="height: 100%;width: 100%;">
         <div class="mdl-grid center-items" style="height: 80vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center" id="floden-gui-instructions-text">
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center center-items" id="floden-gui-instructions-text" style="margin-top: 30vh;">
             Hello world, lorem ipsum dolores et.
           </div>
         </div>
         <div class="mdl-grid center-items" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center" style="padding-top: 0;">
-            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="startTrialBlock()">Start</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="state_machine.advanceState();">Start</button>
           </div>
         </div>
       </div>

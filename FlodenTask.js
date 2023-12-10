@@ -1,6 +1,6 @@
 const FLODEN_TASK_SCORE = [0, 40, 30, 20, 15, 8];
 const FLODEN_TASK_NUM_CARDS = 5;
-const FLODEN_TASK_SHOW_CARD_INTERVAL = 2000; // 2s interval between adding/subtracting cards.
+let FLODEN_TASK_SHOW_CARD_INTERVAL = 2000; // 2s interval between adding/subtracting cards.
 const FLODEN_TASK_METRICS = ["condition", "decision_latency", "success", "score"];
 
 function getTimestampNow(){
@@ -187,6 +187,12 @@ const FlodenTask = (function(is_addition_task) {
     pending_timeouts: [],
     is_add_condition: is_addition_task,
     has_started: false,
+    is_practice: false,
+    end_callback: null,
+    // Modify the inter-trial-interval (ITI).
+    modifyInterval: function(interval) {
+      FLODEN_TASK_SHOW_CARD_INTERVAL = interval;
+    },
     // Resets variables in preparation for the next trial.
     reset: function() {
       console.log("Resetting trial...");
@@ -199,6 +205,11 @@ const FlodenTask = (function(is_addition_task) {
       if (this.is_add_condition === false) {
         this.card_array.forEach((card) => card.showCard());
       }
+      this.end_callback = null;
+    },
+    // Set callback function after ending.
+    setEndCallback: function(fn) {
+      this.end_callback = fn;
     },
     // Start task after adding metrics.
     start: function() {
@@ -228,12 +239,20 @@ const FlodenTask = (function(is_addition_task) {
         console.log("Error: current trial has not yet started.");
         return;
       }
+      this.has_started = false;
       console.log("Ending trial...");
       this.pending_timeouts.forEach((timeout_id) => clearTimeout(timeout_id));
       // Reveal all shown cards.
       this.card_array.forEach((card) => card.revealCard());
       // Computes all metrics.
       this.metrics_array.forEach((metric) => metric.compute());
+      // Invoke task callback.
+      if (this.end_callback !== null) {
+        // TODO: abstract callback.execute to wrapper function.
+        // currently this depends on the definition of the
+        // particular callback object passed here.
+        setTimeout(() => this.end_callback.execute(), FLODEN_TASK_SHOW_CARD_INTERVAL);
+      }
     },
     // Prints metrics for the current trial of task.
     printMetrics: function() {
