@@ -125,7 +125,7 @@ const InitState = (function(fsm, index) {
     name: "Init State",
     next: function() {
       if (index > TRIAL_BLOCK_SEQUENCE.length) {
-        return InitState(this.fsm, index-1);
+        return InitState(this.fsm, index);
       }
       var expt_args = TRIAL_BLOCK_SEQUENCE[index].expt_args;
       var additional_fn = TRIAL_BLOCK_SEQUENCE[index].additional_fn;
@@ -156,6 +156,10 @@ const InitState = (function(fsm, index) {
       }
     },
     execute: function() {
+      if (index >= TRIAL_BLOCK_SEQUENCE.length) {
+        this.fsm.dispInstruction();
+        return;
+      }
       console.log("Populate instructions.");
       this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
       this.fsm.dispInstruction();
