@@ -125,25 +125,11 @@ const InitState = (function(fsm, index) {
     name: "Init State",
     next: function() {
       if (index > TRIAL_BLOCK_SEQUENCE.length) {
-        return InitState(this.fsm, index);
+        // Loop back to start of session.
+        return InitState(this.fsm, 0);
       }
       var expt_args = TRIAL_BLOCK_SEQUENCE[index].expt_args;
-      var additional_fn = TRIAL_BLOCK_SEQUENCE[index].additional_fn;
       if (expt_args === null) {
-        if (additional_fn !== null) {
-          additional_fn.forEach((fn_enum) => {
-            switch (fn_enum) {
-              case INSTRUCTION_STATE_FN_ENUM.RESET:
-                this.fsm.resetMetrics();
-                break;
-              case INSTRUCTION_STATE_FN_ENUM.DOWNLOAD:
-                this.fsm.downloadMetrics();
-                break;
-              default:
-                console.log("Warning: function " + fn_enum + " not implemented.");
-            }
-          });
-        }
         return InitState(this.fsm, index+1);
       }
       else {
@@ -159,6 +145,22 @@ const InitState = (function(fsm, index) {
       if (index >= TRIAL_BLOCK_SEQUENCE.length) {
         this.fsm.dispInstruction();
         return;
+      }
+      var additional_fn = TRIAL_BLOCK_SEQUENCE[index].additional_fn;
+      console.log(`Executing additional functions: ${additional_fn}`);
+      if (additional_fn !== undefined) {
+        additional_fn.forEach((fn_enum) => {
+          switch (fn_enum) {
+            case INSTRUCTION_STATE_FN_ENUM.RESET:
+              this.fsm.resetMetrics();
+              break;
+            case INSTRUCTION_STATE_FN_ENUM.DOWNLOAD:
+              this.fsm.downloadMetrics();
+              break;
+            default:
+              console.log("Warning: function " + fn_enum + " not implemented.");
+          }
+        });
       }
       console.log("Populate instructions.");
       this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
