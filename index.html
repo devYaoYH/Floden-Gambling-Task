@@ -77,8 +77,7 @@
 
       function resetMetricsHistory() {
         FLODEN_TASK_METRICS.forEach((metric_id) => folden_task_metrics_history[metric_id] = []);
-        cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
-        folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
+        folden_task_total_score_element.innerHTML = `Total Score: 0`;
       }
 
       function submitTrial() {
@@ -91,8 +90,13 @@
         FLODEN_TASK_METRICS.forEach((metric_id) => 
             folden_task_metrics_history[metric_id]
                 .push(folden_task.getMetricById(metric_id).value));
-        cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
-        folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
+        if (folden_task_metrics_history["score"].length > 0) {
+          cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
+          folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
+        }
+        else {
+          folden_task_total_score_element.innerHTML = `Total Score: 0`;
+        }
       }
 
       function generateCsvContents() {
