@@ -11,9 +11,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: true,
-      num_trials: 5,
+      num_trials: 2,
       condition: 'add',
-      interval: 2000,
+      interval: 1000,
     },
   },
   // Practice session: SUBTRACTION.
@@ -25,9 +25,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: true,
-      num_trials: 5,
+      num_trials: 2,
       condition: 'sub',
-      interval: 2000,
+      interval: 1000,
     },
   },
   // Synthetic: Reset Experiment Metrics (to clear practice trials).
@@ -48,9 +48,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: 3,
       condition: 'add',
-      interval: 2000,
+      interval: 500,
     },
   },
   // BLOCK 2: 20 SUB (FAST ITI).
@@ -61,9 +61,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: 3,
       condition: 'sub',
-      interval: 2000,
+      interval: 500,
     },
   },
   // BLOCK 3: 20 SUB (SLOW ITI).
@@ -75,9 +75,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: 3,
       condition: 'sub',
-      interval: 10000,
+      interval: 1000,
     },
   },
   // BLOCK 4: 20 ADD (SLOW ITI).
@@ -89,9 +89,9 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: 3,
       condition: 'add',
-      interval: 10000,
+      interval: 1000,
     },
   },
   // Summary page.
