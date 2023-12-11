@@ -124,7 +124,7 @@ const InitState = (function(fsm, index) {
     ...State(fsm),
     name: "Init State",
     next: function() {
-      if (index > TRIAL_BLOCK_SEQUENCE.length) {
+      if (index >= TRIAL_BLOCK_SEQUENCE.length) {
         // Loop back to start of session.
         return InitState(this.fsm, 0);
       }
