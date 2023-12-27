@@ -25,7 +25,9 @@
 
       // Global Variables
       let folden_task_metrics_history = {};
-      let folden_task = FlodenTask(false);
+      let folden_task = FlodenTask(false, {
+        submitTrialFn: submitTrial,
+      });
       let folden_task_current_pts_element = null;
       let folden_task_total_score_element = null;
       let gui_tab_experiment = null;
