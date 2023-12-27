@@ -172,7 +172,7 @@ const FlodenCard = (function(element_id) {
   
   // Initialization
   cardObj.element = document.getElementById(element_id);
-  cardObj.element.style.backgroundImage = "url(img/more-leaves-on-green.png)";
+  cardObj.element.style.backgroundImage = "url(img/moroccan-flower.png)";
   cardObj.element.innerHTML = "";
   cardObj.hideCard();
 
