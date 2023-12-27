@@ -156,11 +156,15 @@ const FlodenCard = (function(element_id) {
       if (this.shown === true) {
         if (this.winning === true) {
           this.element.style.backgroundImage = "";
-          this.element.style.backgroundColor = "#FF3333";
+          this.element.style.backgroundColor = "#FCFCFC";
+          this.element.innerHTML = "O";
+          this.element.style.color = "#33FF33";
         }
         else {
           this.element.style.backgroundImage = "";
-          this.element.style.backgroundColor = "#333333";
+          this.element.style.backgroundColor = "#FCFCFC";
+          this.element.innerHTML = "X";
+          this.element.style.color = "#FF3333";
         }
       }
     },
@@ -169,6 +173,7 @@ const FlodenCard = (function(element_id) {
   // Initialization
   cardObj.element = document.getElementById(element_id);
   cardObj.element.style.backgroundImage = "url(img/more-leaves-on-green.png)";
+  cardObj.element.innerHTML = "";
   cardObj.hideCard();
 
   return cardObj;
