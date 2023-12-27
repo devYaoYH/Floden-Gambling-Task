@@ -1,7 +1,7 @@
 const FLODEN_TASK_SCORE = [0, 40, 30, 20, 15, 8];
 const FLODEN_TASK_NUM_CARDS = 5;
 let FLODEN_TASK_SHOW_CARD_INTERVAL = 2000; // 2s interval between adding/subtracting cards.
-const FLODEN_TASK_METRICS = ["condition", "decision_latency", "success", "score"];
+const FLODEN_TASK_METRICS = ["condition", "intertrial_interval", "decision_latency", "num_cards_shown", "score", "outcome"];
 
 function getTimestampNow(){
   return window.performance.now();
@@ -33,7 +33,7 @@ const LatencyMetric = (function(init_timestamp) {
     name: "Decision Latency",
     description: "Trial decision latency in milliseconds. This is the amount of time the subject took to decide to press the 'Turn over' button on the current trial.",
     compute: function() {
-      this.value = getTimestampNow() - init_timestamp;
+      this.value = Math.round(getTimestampNow() - init_timestamp);
     },
   };
 });
@@ -41,15 +41,19 @@ const LatencyMetric = (function(init_timestamp) {
 const CorrectnessMetric = (function(task_obj) {
   return {
     ...TaskMetrics(),
-    id: "success",
-    name: "Success",
+    id: "outcome",
+    name: "Trial Outcome",
     description: "Boolean variable that tracks whether the winning card was within the shown cards.",
     compute: function() {
-      winning_card_shown = false
+      if (task_obj.has_expired) {
+        this.value = "N/A";
+        return;
+      }
+      winning_card_shown = false;
       // Loop through task cards to find if winning card is shown.
       task_obj.card_array.forEach((card) => {
         if (card.winning && card.shown) {
-          winning_card_shown = true
+          winning_card_shown = true;
         }
       });
       this.value = winning_card_shown;
@@ -64,13 +68,13 @@ const ScoreMetric = (function(task_obj) {
     name: "Score",
     description: "Total numeric score accumulated from this trial.",
     compute: function() {
-      num_revealed = 0
-      winning_card_shown = false
+      num_revealed = 0;
+      winning_card_shown = false;
       for (let i=0;i<FLODEN_TASK_NUM_CARDS;i++) {
         if (task_obj.card_array[i].shown) {
-          num_revealed += 1
+          num_revealed += 1;
           if (task_obj.card_array[i].winning) {
-            winning_card_shown = true
+            winning_card_shown = true;
           }
         }
       }
@@ -97,6 +101,36 @@ const ConditionMetric = (function(is_add_condition) {
       else {
         this.value = "SUB";
       }
+    },
+  };
+});
+
+const NumCardsMetric = (function(task_obj) {
+  return {
+    ...TaskMetrics(),
+    id: "num_cards_shown",
+    name: "Cards Shown",
+    description: "Number of cards shown on screen when subject makes decision during trial.",
+    compute: function() {
+      num_revealed = 0;
+      for (let i=0;i<FLODEN_TASK_NUM_CARDS;i++) {
+        if (task_obj.card_array[i].shown) {
+          num_revealed += 1;
+        }
+      }
+      this.value = num_revealed;
+    },
+  };
+});
+
+const ItiMetric = (function(interval) {
+  return {
+    ...TaskMetrics(),
+    id: "intertrial_interval",
+    name: "Inter-Trial Interval",
+    description: "Time in milliseconds between card is shown or removed within a single trial.",
+    compute: function() {
+      this.value = interval;
     },
   };
 });
@@ -140,7 +174,7 @@ const FlodenCard = (function(element_id) {
   return cardObj;
 });
 
-const FlodenTask = (function(is_addition_task) {
+const FlodenTask = (function(is_addition_task, gui_interface) {
 
   // Helper function to return a copy of fresh card states.
   function initCardArray() {
@@ -163,6 +197,8 @@ const FlodenTask = (function(is_addition_task) {
   function addCard(task_obj, num_shown) {
     console.log(`Showing card: ${num_shown}`);
     if (num_shown == FLODEN_TASK_NUM_CARDS) {
+      task_obj.has_expired = true;
+      gui_interface.submitTrialFn();
       return;
     }
     task_obj.card_array[num_shown].showCard();
@@ -174,6 +210,8 @@ const FlodenTask = (function(is_addition_task) {
   function subtractCard(task_obj, num_shown) {
     console.log(`Hiding card: ${num_shown-1}`);
     if (num_shown == 0) {
+      task_obj.has_expired = true;
+      gui_interface.submitTrialFn();
       return;
     }
     task_obj.card_array[num_shown-1].hideCard();
@@ -189,6 +227,8 @@ const FlodenTask = (function(is_addition_task) {
     has_started: false,
     is_practice: false,
     end_callback: null,
+    // Whether the trial has expired after maximal time to decision has passed.
+    has_expired: false,
     // Modify the inter-trial-interval (ITI).
     modifyInterval: function(interval) {
       FLODEN_TASK_SHOW_CARD_INTERVAL = interval;
@@ -199,6 +239,7 @@ const FlodenTask = (function(is_addition_task) {
       this.pending_timeouts.forEach((timeout_id) => clearTimeout(timeout_id));
       this.pending_timeouts = [];
       this.has_started = false;
+      this.has_expired = false;
       this.metrics_array = [];
       this.card_array = initCardArray();
       this.card_array[getRandomWinCardIdx()].winning = true;
@@ -222,6 +263,8 @@ const FlodenTask = (function(is_addition_task) {
       this.metrics_array.push(CorrectnessMetric(this));
       this.metrics_array.push(ScoreMetric(this));
       this.metrics_array.push(ConditionMetric(this.is_add_condition));
+      this.metrics_array.push(NumCardsMetric(this));
+      this.metrics_array.push(ItiMetric(FLODEN_TASK_SHOW_CARD_INTERVAL));
       this.has_started = true;
       this.pending_timeouts.push(
           setTimeout(() => {
