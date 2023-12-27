@@ -1,6 +1,7 @@
 const INSTRUCTION_STATE_FN_ENUM = {
   RESET: 'reset_metrics',
   DOWNLOAD: 'download_metrics',
+  UPDATE_SCORE: 'update_score_placeholder_text',
 };
 
 const TRIAL_BLOCK_SEQUENCE = [
@@ -101,7 +102,7 @@ const TRIAL_BLOCK_SEQUENCE = [
       PLEASE HIT END TO COMPLETE THE STUDY.
     `,
     expt_args: null,
-    additional_fn: [INSTRUCTION_STATE_FN_ENUM.DOWNLOAD],
+    additional_fn: [INSTRUCTION_STATE_FN_ENUM.DOWNLOAD, INSTRUCTION_STATE_FN_ENUM.UPDATE_SCORE],
   },
 ];
 
@@ -161,6 +162,9 @@ const InitState = (function(fsm, index) {
               break;
             case INSTRUCTION_STATE_FN_ENUM.DOWNLOAD:
               this.fsm.downloadMetrics();
+              break;
+            case INSTRUCTION_STATE_FN_ENUM.UPDATE_SCORE:
+              this.fsm.updateScorePlaceholderText();
               break;
             default:
               console.log("Warning: function " + fn_enum + " not implemented.");
@@ -234,6 +238,9 @@ const StateMachine = (function(floden_task, gui_interface) {
     downloadMetrics: function() {
       gui_interface.downloadMetricsHistory();
     },
+    updateScorePlaceholderText: function() {
+      gui_interface.updateScorePlaceholderText();
+    }
   };
   return stateObj;
 });
