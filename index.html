@@ -39,6 +39,7 @@
         resetMetricsHistory: resetMetricsHistory,
         downloadMetricsHistory: downloadResults,
         setInstructions: setInstructionText,
+        updateScorePlaceholderText: updateScoreInInstructionText,
       });
 
       // Initialize metrics_history with metrics to be emitted.
@@ -75,6 +76,17 @@
 
       function setInstructionText(text) {
         gui_instructions_text_element.innerHTML = text;
+      }
+
+      function updateScoreInInstructionText() {
+        score_placeholder_text_regex = "\{X\}";
+        raw_text = gui_instructions_text_element.innerHTML;
+        cur_total_score = 0;
+        if (folden_task_metrics_history["score"].length > 0) {
+          cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
+        }
+        transformed_text = raw_text.replace(score_placeholder_text_regex, `${cur_total_score}`);
+        gui_instructions_text_element.innerHTML = transformed_text;
       }
 
       function resetMetricsHistory() {
