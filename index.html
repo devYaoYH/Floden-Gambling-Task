@@ -39,6 +39,7 @@
         resetMetricsHistory: resetMetricsHistory,
         downloadMetricsHistory: downloadResults,
         setInstructions: setInstructionText,
+        setButtonText: setButtonText,
         updateScorePlaceholderText: updateScoreInInstructionText,
       });
 
@@ -51,6 +52,7 @@
         gui_tab_experiment = document.getElementById("floden-gui-experiment-tab");
         gui_tab_instructions = document.getElementById("floden-gui-instructions-tab");
         gui_instructions_text_element = document.getElementById("floden-gui-instructions-text");
+        gui_instructions_button_element = document.getElementById("floden-gui-instructions-btn");
         folden_task.reset();
         // Repeated polling events.
         setInterval(() => {
@@ -61,7 +63,7 @@
           else {
             num_cards_shown = folden_task.card_array.filter((card) => card.shown).length;
           }
-          folden_task_current_pts_element.innerHTML = `Points: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
+          folden_task_current_pts_element.innerHTML = `Points available now: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
         }, 200);
         state_machine.resetState();
       };
@@ -78,6 +80,10 @@
         gui_instructions_text_element.innerHTML = text;
       }
 
+      function setButtonText(text) {
+        gui_instructions_button_element.innerHTML = text;
+      }
+
       function updateScoreInInstructionText() {
         score_placeholder_text_regex = "\{X\}";
         raw_text = gui_instructions_text_element.innerHTML;
@@ -85,6 +91,7 @@
         if (folden_task_metrics_history["score"].length > 0) {
           cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
         }
+        console.log(`Updating score placeholder text \{X\} to: ${cur_total_score}`);
         transformed_text = raw_text.replace(score_placeholder_text_regex, `${cur_total_score}`);
         gui_instructions_text_element.innerHTML = transformed_text;
       }
@@ -154,7 +161,7 @@
         width: 100%;
         height: 10vh;
       }
-      #floden-gui-start-btn {
+      #floden-gui-instructions-btn {
         font-size: 6vh;
         width: 100%;
         height: 10vh;
@@ -175,19 +182,19 @@
 
       <div class="mdl-tabs__panel" id="floden-gui-instructions-panel" style="height: 100%;width: 100%;">
         <div class="mdl-grid center-items" style="height: 80vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center center-items" id="floden-gui-instructions-text" style="margin-top: 30vh;">
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center center-items" id="floden-gui-instructions-text" style="margin-top: 20vh;">
             Hello world, lorem ipsum dolores et.
           </div>
         </div>
         <div class="mdl-grid center-items" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center" style="padding-top: 0;">
-            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-start-btn" onClick="state_machine.advanceState();">GO</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised" id="floden-gui-instructions-btn" onClick="state_machine.advanceState();">GO</button>
           </div>
         </div>
       </div>
       <div class="mdl-tabs__panel is-active" id="floden-gui-experiment-panel" style="height: 100%;width: 100%">
         <div class="mdl-grid" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points: 0</div>
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points available now: 0</div>
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
             Floden Gambling Task (demo)
           </div>

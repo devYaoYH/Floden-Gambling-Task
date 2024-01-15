@@ -5,10 +5,21 @@ const INSTRUCTION_STATE_FN_ENUM = {
 };
 
 const TRIAL_BLOCK_SEQUENCE = [
+  // Start screen.
+  {
+    instruction_text: `
+      We will begin with PRACTICE SESSIONS in both an add and a subtract condition.<br>
+      Press CONTINUE to move to the next screen
+    `,
+    expt_args: null,
+    button_text: "CONTINUE",
+  },
   // Practice session: ADDITION.
   {
     instruction_text: `
-      TO BEGIN THE PRACTICE SESSION , PRESS GO.
+      FIRST YOU WILL PRACTICE THE ADD CONDITION:<br>
+      In the ADD condition, cards will be dealt on the screen. You can stop the dealer at any time by pushing the “Turn Over” button. If the winning card is in your hand when you turn the cards over, you win a prize. The size of that prize depends on how many cards are on the screen, with larger prizes rewarded for stopping the dealer with fewer cards. The size of the prize you would win is represented at the top left corner of the screen throughout the test. The bank of your current winnings is represented at the top right.<br>
+      Push the Go button to practice the ADD condition.
     `,
     expt_args: {
       is_practice: true,
@@ -16,13 +27,14 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'add',
       interval: 2000,
     },
+    button_text: "GO",
   },
   // Practice session: SUBTRACTION.
   {
     instruction_text: `
-      YOU HAVE COMPLETED THE PRACTICE TRIALS IN THE ADD CONDITION.
-      NEXT, YOU WILL DO PRACTICE TRIALS IN THE SUBTRACT CONDITION.
-      TO BEGIN THE SUBTRACT CONDITION, PRESS GO.
+      NOW YOU WILL PRACTICE THE SUBTRACT CONDITION:<br>
+      In the SUBTRACT condition, you will start with five cards. The dealer removes one card from the screen at a time. You can stop the dealer at any time by pushing the “Turn Over” button. If the winning card is in your hand when you turn the cards over, you win a prize. The size of that prize, as in the add condition, depends on how many cards are on the screen, with larger prizes rewarded for stopping the dealer with fewer cards. The size of the prize you would win is represented at the top left corner of the screen throughout the test. The bank of your current winnings is represented at the top right.<br>
+      PUSH THE GO BUTTON to start this practice trial of the SUBTRACT condition.
     `,
     expt_args: {
       is_practice: true,
@@ -30,16 +42,17 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'sub',
       interval: 2000,
     },
+    button_text: "GO",
   },
   // Synthetic: Reset Experiment Metrics (to clear practice trials).
   {
     instruction_text: `
-      YOU HAVE COMPLETED THE PRACTICE TRIALS IN THE SUBTRACT CONDITION.
-      NEXT, YOU WILL BEGIN THE STUDY.
-      WHEN YOU ARE READY TO BEGIN THE STUDY, PRESS GO.
+      You have completed the practice trials. You can now begin the experimental trials.<br>
+      Press GO when you are ready.
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
+    button_text: "GO",
   },
   // BLOCK 1: 20 ADD (FAST ITI).
   {
@@ -53,12 +66,13 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'add',
       interval: 2000,
     },
+    button_text: "GO",
   },
   // BLOCK 2: 20 SUB (FAST ITI).
   {
     instruction_text: `
       YOU HAVE COMPLETED THE FIRST ADD CONDITION.
-      THE SUBTRACTION CONDITION WHILL BEGIN WHEN YOU PRESS GO.
+      THE SUBTRACTION CONDITION WILL BEGIN WHEN YOU PRESS GO.
     `,
     expt_args: {
       is_practice: false,
@@ -66,12 +80,13 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'sub',
       interval: 2000,
     },
+    button_text: "GO",
   },
   // BLOCK 3: 20 SUB (SLOW ITI).
   {
     instruction_text: `
       YOU HAVE COMPLETED THE FIRST SUBTRACT CONDITION.
-      A SECOND SUBTRACTION CONDITION WHILL BEGIN WHEN YOU PRESS GO.
+      A SECOND SUBTRACTION CONDITION WILL BEGIN WHEN YOU PRESS GO.
       THIS TIME, THERE IS A SLIGHTLY LONGER DELAY BETWEEN TRIALS.
     `,
     expt_args: {
@@ -80,12 +95,13 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'sub',
       interval: 10000,
     },
+    button_text: "GO",
   },
   // BLOCK 4: 20 ADD (SLOW ITI).
   {
     instruction_text: `
       YOU HAVE COMPLETED THE SECOND SUBTRACT CONDITION.
-      A SECOND ADD CONDITION WHILL BEGIN WHEN YOU PRESS GO.
+      A SECOND ADD CONDITION WILL BEGIN WHEN YOU PRESS GO.
       THESE TRIALS ALSO HAVE A LONGER DELAY THAN THE FIRST TWO HAD.
     `,
     expt_args: {
@@ -94,6 +110,7 @@ const TRIAL_BLOCK_SEQUENCE = [
       condition: 'add',
       interval: 10000,
     },
+    button_text: "GO",
   },
   // Summary page.
   {
@@ -103,6 +120,7 @@ const TRIAL_BLOCK_SEQUENCE = [
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.DOWNLOAD, INSTRUCTION_STATE_FN_ENUM.UPDATE_SCORE],
+    button_text: "END",
   },
 ];
 
@@ -168,6 +186,7 @@ const InitState = (function(fsm, index) {
       }
       console.log("Populate instructions.");
       this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
+      this.fsm.setButtonText(TRIAL_BLOCK_SEQUENCE[index].button_text);
       this.fsm.dispInstruction();
     },
   };
@@ -232,6 +251,9 @@ const StateMachine = (function(floden_task, gui_interface) {
     },
     setInstruction: function(text) {
       gui_interface.setInstructions(text);
+    },
+    setButtonText: function(text) {
+      gui_interface.setButtonText(text);
     },
     downloadMetrics: function() {
       gui_interface.downloadMetricsHistory();
