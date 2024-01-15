@@ -1,6 +1,7 @@
 const FLODEN_TASK_SCORE = [0, 40, 30, 20, 15, 8];
 const FLODEN_TASK_NUM_CARDS = 5;
-let FLODEN_TASK_SHOW_CARD_INTERVAL = 2000; // 2s interval between adding/subtracting cards.
+const FLODEN_TASK_SHOW_CARD_INTERVAL = 2000; // 2s interval between adding/subtracting cards.
+let FLODEN_TASK_TRIAL_INTERVAL = 2000; // 2s (default) interval between trials.
 const FLODEN_TASK_METRICS = ["condition", "intertrial_interval", "decision_latency", "num_cards_shown", "score", "outcome"];
 
 function getTimestampNow(){
@@ -236,7 +237,7 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
     has_expired: false,
     // Modify the inter-trial-interval (ITI).
     modifyInterval: function(interval) {
-      FLODEN_TASK_SHOW_CARD_INTERVAL = interval;
+      FLODEN_TASK_TRIAL_INTERVAL = interval;
     },
     // Resets variables in preparation for the next trial.
     reset: function() {
@@ -269,7 +270,7 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
       this.metrics_array.push(ScoreMetric(this));
       this.metrics_array.push(ConditionMetric(this.is_add_condition));
       this.metrics_array.push(NumCardsMetric(this));
-      this.metrics_array.push(ItiMetric(FLODEN_TASK_SHOW_CARD_INTERVAL));
+      this.metrics_array.push(ItiMetric(FLODEN_TASK_TRIAL_INTERVAL));
       this.has_started = true;
       this.pending_timeouts.push(
           setTimeout(() => {
@@ -299,7 +300,7 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
         // TODO: abstract callback.execute to wrapper function.
         // currently this depends on the definition of the
         // particular callback object passed here.
-        setTimeout(() => this.end_callback.execute(), FLODEN_TASK_SHOW_CARD_INTERVAL);
+        setTimeout(() => this.end_callback.execute(), FLODEN_TASK_TRIAL_INTERVAL);
       }
     },
     // Prints metrics for the current trial of task.
