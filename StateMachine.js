@@ -12,6 +12,7 @@ const TRIAL_BLOCK_SEQUENCE = [
       Press CONTINUE to move to the next screen
     `,
     expt_args: null,
+    additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
     button_text: "CONTINUE",
   },
   // Practice session: ADDITION.
