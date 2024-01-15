@@ -165,6 +165,11 @@ const InitState = (function(fsm, index) {
         this.fsm.dispInstruction();
         return;
       }
+
+      console.log("Populate instructions.");
+      this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
+      this.fsm.setButtonText(TRIAL_BLOCK_SEQUENCE[index].button_text);
+
       var additional_fn = TRIAL_BLOCK_SEQUENCE[index].additional_fn;
       console.log(`Executing additional functions: ${additional_fn}`);
       if (additional_fn !== undefined) {
@@ -184,9 +189,7 @@ const InitState = (function(fsm, index) {
           }
         });
       }
-      console.log("Populate instructions.");
-      this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
-      this.fsm.setButtonText(TRIAL_BLOCK_SEQUENCE[index].button_text);
+
       this.fsm.dispInstruction();
     },
   };
