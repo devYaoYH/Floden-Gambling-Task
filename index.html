@@ -53,6 +53,10 @@
         gui_tab_instructions = document.getElementById("floden-gui-instructions-tab");
         gui_instructions_text_element = document.getElementById("floden-gui-instructions-text");
         gui_instructions_button_element = document.getElementById("floden-gui-instructions-btn");
+        // Initialize Instructions Text Formatting
+        gui_instructions_text_element_font_size = Math.ceil(0.05*window.innerHeight);
+        gui_instructions_text_element.style.fontSize = `${gui_instructions_text_element_font_size}px`;
+        gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*gui_instructions_text_element_font_size)}px`;
         folden_task.reset();
         // Repeated polling events.
         setInterval(() => {
@@ -68,6 +72,10 @@
         state_machine.resetState();
       };
 
+      window.onresize = () => {
+        updateInstructionTextFit();
+      }
+
       function moveToInstructionsPanel() {
         gui_tab_instructions.click();
       }
@@ -78,10 +86,25 @@
 
       function setInstructionText(text) {
         gui_instructions_text_element.innerHTML = text;
+        updateInstructionTextFit();
       }
 
       function setButtonText(text) {
         gui_instructions_button_element.innerHTML = text;
+      }
+
+      function updateInstructionTextFit() {
+        overflow_height = gui_instructions_text_element.scrollHeight;
+        div_height = gui_instructions_text_element.clientHeight;
+        text_size = parseInt(gui_instructions_text_element.style.fontSize);
+        console.log(`Update Instruction Text Fit: cur_size ${text_size}, scroll_height: ${overflow_height}, div_height: ${div_height}`);
+        min_text_size = 10;
+        while (overflow_height > div_height && text_size > min_text_size) {
+          text_size -= 1;
+          gui_instructions_text_element.style.fontSize = `${text_size}px`;
+          overflow_height = gui_instructions_text_element.scrollHeight;
+        }
+        console.log(`Update Instruction Text Fit: updated_size ${text_size}`);
       }
 
       function updateScoreInInstructionText() {
@@ -167,8 +190,7 @@
         height: 10vh;
       }
       #floden-gui-instructions-text {
-        font-size: 5vh;
-        line-height: 5.5vh;
+        height: 60vh;
         width: 100%;
       }
     </style>
@@ -196,7 +218,6 @@
         <div class="mdl-grid" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points available now: 0</div>
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
-            Floden Gambling Task (demo)
           </div>
           <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total Score: 0</div>
         </div>
