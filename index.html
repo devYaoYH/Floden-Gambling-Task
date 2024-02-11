@@ -33,6 +33,7 @@
       let gui_tab_experiment = null;
       let gui_tab_instructions = null;
       let gui_instructions_text = null;
+      let gui_instructions_text_element_font_size = 50;
       let state_machine = StateMachine(folden_task, {
         moveToInstruction: moveToInstructionsPanel,
         moveToExperiment: moveToExperimentPanel,
@@ -94,17 +95,18 @@
       }
 
       function updateInstructionTextFit() {
+        text_size = gui_instructions_text_element_font_size;
+        gui_instructions_text_element.style.fontSize = `${text_size}px`;
+        gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*text_size)}px`;
         overflow_height = gui_instructions_text_element.scrollHeight;
         div_height = gui_instructions_text_element.clientHeight;
-        text_size = parseInt(gui_instructions_text_element.style.fontSize);
-        console.log(`Update Instruction Text Fit: cur_size ${text_size}, scroll_height: ${overflow_height}, div_height: ${div_height}`);
         min_text_size = 10;
         while (overflow_height > div_height && text_size > min_text_size) {
           text_size -= 1;
           gui_instructions_text_element.style.fontSize = `${text_size}px`;
+          gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*text_size)}px`;
           overflow_height = gui_instructions_text_element.scrollHeight;
         }
-        console.log(`Update Instruction Text Fit: updated_size ${text_size}`);
       }
 
       function updateScoreInInstructionText() {
@@ -216,10 +218,10 @@
       </div>
       <div class="mdl-tabs__panel is-active" id="floden-gui-experiment-panel" style="height: 100%;width: 100%">
         <div class="mdl-grid" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">Points available now: 0</div>
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-pts">$$ available now: 0</div>
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center mdl-typography--headline">
           </div>
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total Score: 0</div>
+          <div class="mdl-cell mdl-cell--3-col mdl-typography--headline" id="floden-gui-tot">Total $$: 0</div>
         </div>
         <div class="mdl-grid center-items" style="height: 50vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--2-col">
