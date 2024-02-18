@@ -58,6 +58,7 @@
         gui_instructions_text_element_font_size = Math.ceil(0.05*window.innerHeight);
         gui_instructions_text_element.style.fontSize = `${gui_instructions_text_element_font_size}px`;
         gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*gui_instructions_text_element_font_size)}px`;
+        // Initialize Task
         folden_task.reset();
         // Repeated polling events.
         setInterval(() => {
@@ -68,7 +69,7 @@
           else {
             num_cards_shown = folden_task.card_array.filter((card) => card.shown).length;
           }
-          folden_task_current_pts_element.innerHTML = `Points available now: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
+          folden_task_current_pts_element.innerHTML = `$$ available now: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
         }, 200);
         state_machine.resetState();
       };
@@ -87,7 +88,7 @@
 
       function setInstructionText(text) {
         gui_instructions_text_element.innerHTML = text;
-        updateInstructionTextFit();
+        setTimeout(() => updateInstructionTextFit(), 5);
       }
 
       function setButtonText(text) {
@@ -123,7 +124,7 @@
 
       function resetMetricsHistory() {
         FLODEN_TASK_METRICS.forEach((metric_id) => folden_task_metrics_history[metric_id] = []);
-        folden_task_total_score_element.innerHTML = `Total Score: 0`;
+        folden_task_total_score_element.innerHTML = `Total $$: 0`;
       }
 
       function submitTrial() {
@@ -138,10 +139,10 @@
                 .push(folden_task.getMetricById(metric_id).value));
         if (folden_task_metrics_history["score"].length > 0) {
           cur_total_score = folden_task_metrics_history["score"].reduce((accum, val) => accum+val);
-          folden_task_total_score_element.innerHTML = `Total Score: ${cur_total_score}`;
+          folden_task_total_score_element.innerHTML = `Total $$: ${cur_total_score}`;
         }
         else {
-          folden_task_total_score_element.innerHTML = `Total Score: 0`;
+          folden_task_total_score_element.innerHTML = `Total $$: 0`;
         }
       }
 
@@ -177,6 +178,7 @@
         text-align: center;
         justify-content: center;
         font-size: 15vh;
+        writing-mode: vertical-rl;
       }
       .center-items {
         justify-content: center;

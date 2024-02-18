@@ -116,7 +116,7 @@ const TRIAL_BLOCK_SEQUENCE = [
   // Summary page.
   {
     instruction_text: `
-      THANK YOU FOR PLAYING. YOU WON {X} DOLLARS.
+      THANK YOU FOR PLAYING. YOU WON $$ {X} DOLLARS.
       PLEASE HIT END TO COMPLETE THE STUDY.
     `,
     expt_args: null,
