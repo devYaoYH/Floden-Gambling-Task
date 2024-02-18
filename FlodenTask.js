@@ -156,13 +156,13 @@ const FlodenCard = (function(element_id) {
     revealCard: function() {
       if (this.shown === true) {
         if (this.winning === true) {
-          this.element.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+          this.element.style.backgroundColor = "rgba(192, 255, 192, 0.5)";
           this.element.style.backgroundBlendMode = "overlay";
           this.element.innerHTML = "WIN";
           this.element.style.color = "#33AB33";
         }
         else {
-          this.element.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+          this.element.style.backgroundColor = "rgba(255, 192, 192, 0.5)";
           this.element.style.backgroundBlendMode = "overlay";
           this.element.innerHTML = "X";
           this.element.style.color = "#AB3333";
@@ -174,7 +174,7 @@ const FlodenCard = (function(element_id) {
   // Initialization
   cardObj.element = document.getElementById(element_id);
   cardObj.element.style.backgroundImage = "url(img/moroccan-flower.png)";
-  cardObj.element.style.backgroundColor = "rgba(255, 33, 33, 0.7)";
+  cardObj.element.style.backgroundColor = "rgba(192, 33, 33, 0.7)";
   cardObj.element.style.backgroundBlendMode = "multiply";
   cardObj.element.innerHTML = "";
   cardObj.hideCard();
