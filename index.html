@@ -27,9 +27,12 @@
       let folden_task_metrics_history = {};
       let folden_task = FlodenTask(false, {
         submitTrialFn: submitTrial,
+        enableBtn: enableSubmitTrialBtn,
+        disableBtn: disableSubmitTrialBtn,
       });
       let folden_task_current_pts_element = null;
       let folden_task_total_score_element = null;
+      let gui_expt_submit_btn = null;
       let gui_tab_experiment = null;
       let gui_tab_instructions = null;
       let gui_instructions_text = null;
@@ -50,6 +53,7 @@
       window.onload = () => {
         folden_task_current_pts_element = document.getElementById("floden-gui-pts");
         folden_task_total_score_element = document.getElementById("floden-gui-tot");
+        gui_expt_submit_btn = document.getElementById("floden-gui-submit-btn");
         gui_tab_experiment = document.getElementById("floden-gui-experiment-tab");
         gui_tab_instructions = document.getElementById("floden-gui-instructions-tab");
         gui_instructions_text_element = document.getElementById("floden-gui-instructions-text");
@@ -93,6 +97,14 @@
 
       function setButtonText(text) {
         gui_instructions_button_element.innerHTML = text;
+      }
+
+      function enableSubmitTrialBtn() {
+        gui_expt_submit_btn.removeAttribute('disabled');
+      }
+
+      function disableSubmitTrialBtn() {
+        gui_expt_submit_btn.setAttribute('disabled', '');
       }
 
       function updateInstructionTextFit() {

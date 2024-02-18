@@ -266,6 +266,7 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
         console.log("Error: reset current trial first.");
         return;
       }
+      gui_interface.enableBtn();
       console.log("Starting trial...");
       this.metrics_array.push(LatencyMetric(getTimestampNow()));
       this.metrics_array.push(CorrectnessMetric(this));
@@ -290,6 +291,7 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
         console.log("Error: current trial has not yet started.");
         return;
       }
+      gui_interface.disableBtn();
       this.has_started = false;
       console.log("Ending trial...");
       this.pending_timeouts.forEach((timeout_id) => clearTimeout(timeout_id));
