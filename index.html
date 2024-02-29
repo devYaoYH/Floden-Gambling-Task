@@ -175,7 +175,7 @@
         encodedUri = encodeURI(csvContent);
         link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "floden_gambling_task_results.csv");
+        link.setAttribute("download", `floden_gambling_task_results ${new Date()}.csv`);
         document.body.appendChild(link);
         link.click();
       }
