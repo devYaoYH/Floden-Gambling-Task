@@ -110,14 +110,14 @@
       function updateInstructionTextFit() {
         text_size = gui_instructions_text_element_font_size;
         gui_instructions_text_element.style.fontSize = `${text_size}px`;
-        gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*text_size)}px`;
+        gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.5*text_size)}px`;
         overflow_height = gui_instructions_text_element.scrollHeight;
         div_height = gui_instructions_text_element.clientHeight;
         min_text_size = 10;
         while (overflow_height > div_height && text_size > min_text_size) {
           text_size -= 1;
           gui_instructions_text_element.style.fontSize = `${text_size}px`;
-          gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.1*text_size)}px`;
+          gui_instructions_text_element.style.lineHeight = `${Math.ceil(1.5*text_size)}px`;
           overflow_height = gui_instructions_text_element.scrollHeight;
         }
       }
@@ -218,9 +218,9 @@
           <a href="#floden-gui-experiment-panel" class="mdl-tabs__tab is-active" id="floden-gui-experiment-tab">Experiment Trials</a>
       </div>
 
-      <div class="mdl-tabs__panel" id="floden-gui-instructions-panel" style="height: 100%;width: 100%;">
+      <div class="mdl-tabs__panel" id="floden-gui-instructions-panel" style="height: 100%; width: 100%; background-image: url('img/instructions_background.png');">
         <div class="mdl-grid center-items" style="height: 80vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col mdl-typography--text-center center-items" id="floden-gui-instructions-text" style="margin-top: 20vh;">
+          <div class="mdl-cell mdl-cell--3-col center-items" id="floden-gui-instructions-text" style="margin-top: 15vh;padding-left: 5vw;padding-right: 5vw;">
             Hello world, lorem ipsum dolores et.
           </div>
         </div>
@@ -230,7 +230,8 @@
           </div>
         </div>
       </div>
-      <div class="mdl-tabs__panel is-active" id="floden-gui-experiment-panel" style="height: 100%;width: 100%">
+
+      <div class="mdl-tabs__panel is-active" id="floden-gui-experiment-panel" style="height: 100%; width: 100%;">
         <div class="mdl-grid" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--12-col mdl-typography--headline" style="display: flex;justify-content: space-between;">
             <div id="floden-gui-pts">$$ available now: 0</div>

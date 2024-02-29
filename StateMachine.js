@@ -1,3 +1,14 @@
+const NUM_PRACTICE_GAMES = 5;
+const NUM_EXPT_GAMES = 20;
+const SHORT_ITI = 2000;
+const LONG_ITI = 10000;
+
+const IMG_FORWARDS_GAME = 'img/FORWARDS.JPG';
+const IMG_BACKWARDS_GAME = 'img/BACKWARDS.JPG';
+const IMG_CARDS = 'img/CARDS.JPG';
+const IMG_UI_CURRENT_SCORE = 'img/UI_CURRENT_SCORE.JPG';
+const IMG_UI_TOTAL_SCORE = 'img/UI_TOTAL_SCORE.JPG';
+
 const INSTRUCTION_STATE_FN_ENUM = {
   RESET: 'reset_metrics',
   DOWNLOAD: 'download_metrics',
@@ -8,120 +19,196 @@ const TRIAL_BLOCK_SEQUENCE = [
   // Start screen.
   {
     instruction_text: `
-      We will begin with PRACTICE SESSIONS in both an add and a subtract condition.<br>
-      Press CONTINUE to move to the next screen
+      You will begin by playing the game forward.<br>
+      Cards will appear on the screen one at a time.<br>
+      Press the "TURN OVER" button to stop the dealer.<br>
+      You win if the WIN card is in your hand when you turn them over.<br>
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
-    button_text: "CONTINUE",
+    button_text: "PRESS TO CONTINUE",
+  },
+  {
+    instruction_text: `
+      We will begin with PRACTICE GAMES.<br>
+      First, you’ll play the game FORWARD.<br>
+      And then you’ll play it BACKWARD.<br>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      First we will play the game FORWARD.<br>
+      One card at a time will appear on the screen until you press "TURN OVER".<br>
+      <div class="mdl-typography--text-center"><img src="${IMG_FORWARDS_GAME}" style="height:35vh;"/></div>
+      That will stop the dealer and turn over your cards.<br>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      You will win $$ if you have a WIN card at that time.<br><br>
+      <div class="mdl-typography--text-center"><img src="${IMG_CARDS}" style="height:40vh;"/></div>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      How much you win depends on how many cards are on the screen when you turn them over.<br>
+      The MORE cards you have, the LESS $$ you will win.<br>
+      The FEWER cards you have, the MORE $$ you will win.<br>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      In the top left corner, you can see how much $$ you would win if you have a WIN card among the cards currently on the screen.<br>
+      <div class="mdl-typography--text-center"><img src="${IMG_UI_CURRENT_SCORE}" style="height:50vh;"/></div>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      In the top right corner, you can see your total winnings now.<br>
+      <div class="mdl-typography--text-center"><img src="${IMG_UI_TOTAL_SCORE}" style="height:50vh;"/></div>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
   },
   // Practice session: ADDITION.
   {
     instruction_text: `
-      FIRST YOU WILL PRACTICE THE ADD CONDITION:<br>
-      In the ADD condition, cards will be dealt on the screen. You can stop the dealer at any time by pushing the “Turn Over” button. If the winning card is in your hand when you turn the cards over, you win a prize. The size of that prize depends on how many cards are on the screen, with larger prizes rewarded for stopping the dealer with fewer cards. The size of the prize you would win is represented at the top left corner of the screen throughout the test. The bank of your current winnings is represented at the top right.<br>
-      Push the Go button to practice the ADD condition.
+      You will now practice playing the game FORWARD.<br>
+      Press GO to start.<br>
     `,
     expt_args: {
       is_practice: true,
-      num_trials: 5,
+      num_trials: NUM_PRACTICE_GAMES,
       condition: 'add',
-      interval: 2000,
+      interval: SHORT_ITI,
     },
     button_text: "GO",
   },
   // Practice session: SUBTRACTION.
   {
     instruction_text: `
-      NOW YOU WILL PRACTICE THE SUBTRACT CONDITION:<br>
-      In the SUBTRACT condition, you will start with five cards. The dealer removes one card from the screen at a time. You can stop the dealer at any time by pushing the “Turn Over” button. If the winning card is in your hand when you turn the cards over, you win a prize. The size of that prize, as in the add condition, depends on how many cards are on the screen, with larger prizes rewarded for stopping the dealer with fewer cards. The size of the prize you would win is represented at the top left corner of the screen throughout the test. The bank of your current winnings is represented at the top right.<br>
-      PUSH THE GO BUTTON to start this practice trial of the SUBTRACT condition.
+      Now you will practice playing the game BACKWARDS.<br>
+      You will start with five cards.<br>
+      <div class="mdl-typography--text-center"><img src="${IMG_BACKWARDS_GAME}" style="height:35vh;"/></div>
+      They vanish one at a time until you press "TURN OVER".<br>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      Again, how much you win depends on how many cards are on the screen when you turn them over.<br>
+      The MORE cards you have, the LESS $$ you will win.<br>
+      The FEWER cards you have, the MORE $$ you will win.<br>
+    `,
+    expt_args: null,
+    button_text: "PRESS TO CONTINUE"
+  },
+  {
+    instruction_text: `
+      You will now practice playing the game BACKWARDS.<br>
+      Press GO to Start.<br>
     `,
     expt_args: {
       is_practice: true,
-      num_trials: 5,
+      num_trials: NUM_PRACTICE_GAMES,
       condition: 'sub',
-      interval: 2000,
+      interval: SHORT_ITI,
     },
     button_text: "GO",
   },
   // Synthetic: Reset Experiment Metrics (to clear practice trials).
   {
     instruction_text: `
-      You have completed the practice trials. You can now begin the experimental trials.<br>
-      Press GO when you are ready.
+      You have completed the practice trials.<br>
+      You can now begin the experimental trials.<br>
+      There will be a total of FOUR sets of games.<br>
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
-    button_text: "GO",
+    button_text: "PRESS TO CONTINUE",
   },
   // BLOCK 1: 20 ADD (FAST ITI).
   {
     instruction_text: `
-      FIRST YOU WILL COMPLETE AN ADD CONDITION.
-      THE ADD CONDITION WILL BEGIN WHEN YOU PRESS GO.
+      First you will play the game FORWARDS.<br>
+      Press GO to Start.<br>
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: NUM_EXPT_GAMES,
       condition: 'add',
-      interval: 2000,
+      interval: SHORT_ITI,
     },
     button_text: "GO",
   },
   // BLOCK 2: 20 SUB (FAST ITI).
   {
     instruction_text: `
-      YOU HAVE COMPLETED THE FIRST ADD CONDITION.
-      THE SUBTRACTION CONDITION WILL BEGIN WHEN YOU PRESS GO.
+      You have completed the FIRST set of games.<br>
+      Next, you will play the game BACKWARDS.<br>
+      Now five cards will DISAPPEAR, one at a time.<br>
+      Press GO to Start.<br>
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: NUM_EXPT_GAMES,
       condition: 'sub',
-      interval: 2000,
+      interval: SHORT_ITI,
     },
     button_text: "GO",
   },
   // BLOCK 3: 20 SUB (SLOW ITI).
   {
     instruction_text: `
-      YOU HAVE COMPLETED THE FIRST SUBTRACT CONDITION.
-      A SECOND SUBTRACTION CONDITION WILL BEGIN WHEN YOU PRESS GO.
-      THIS TIME, THERE IS A SLIGHTLY LONGER DELAY BETWEEN TRIALS.
+      You have completed the SECOND set of games.<br>
+      Next, you will again play the game BACKWARDS.<br>
+      This time, there is a slightly longer DELAY between attempts.<br>
+      Press GO to Start.<br>
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: NUM_EXPT_GAMES,
       condition: 'sub',
-      interval: 10000,
+      interval: LONG_ITI,
     },
     button_text: "GO",
   },
   // BLOCK 4: 20 ADD (SLOW ITI).
   {
     instruction_text: `
-      YOU HAVE COMPLETED THE SECOND SUBTRACT CONDITION.
-      A SECOND ADD CONDITION WILL BEGIN WHEN YOU PRESS GO.
-      THESE TRIALS ALSO HAVE A LONGER DELAY THAN THE FIRST TWO HAD.
+      You have completed the THIRD set of games.<br>
+      Next, you will again plan the game FORWARDS.<br>
+      Now five cards will APPEAR, one at a time.<br>
+      This time, there will also be a slightly longer DELAY between attempts.<br>
+      Press GO to Start.<br>
     `,
     expt_args: {
       is_practice: false,
-      num_trials: 20,
+      num_trials: NUM_EXPT_GAMES,
       condition: 'add',
-      interval: 10000,
+      interval: LONG_ITI,
     },
     button_text: "GO",
   },
   // Summary page.
   {
     instruction_text: `
-      THANK YOU FOR PLAYING. YOU WON $$ {X} DOLLARS.
-      PLEASE HIT END TO COMPLETE THE STUDY.
+      <div class="mdl-typography--text-center">Congratulations: You won <strong>$\${X}</strong>!</div>
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.DOWNLOAD, INSTRUCTION_STATE_FN_ENUM.UPDATE_SCORE],
-    button_text: "END",
+    button_text: "PRESS TO END",
   },
 ];
 
