@@ -204,7 +204,12 @@ const TRIAL_BLOCK_SEQUENCE = [
   // Summary page.
   {
     instruction_text: `
-      <div class="mdl-typography--text-center">Congratulations: You won <strong>$\${X}</strong>!</div>
+      <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="mdl-typography--text-center">Congratulations: You won <strong>$\${X}</strong>!</div>
+        <div class="mdl-typography--text-center">
+          <button class="mdl-button mdl-js-button mdl-button--raised" style="background-color: #00A36C;" onClick="downloadResults();">DOWNLOAD RESULTS</button>
+        </div>
+      </div>
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.DOWNLOAD, INSTRUCTION_STATE_FN_ENUM.UPDATE_SCORE],
