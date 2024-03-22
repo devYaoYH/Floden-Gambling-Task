@@ -35,7 +35,8 @@
       let gui_expt_submit_btn = null;
       let gui_tab_experiment = null;
       let gui_tab_instructions = null;
-      let gui_instructions_text = null;
+      let gui_instructions_text_element = null;
+      let gui_instructions_img_element = null;
       let gui_instructions_text_element_font_size = 50;
       let state_machine = StateMachine(folden_task, {
         moveToInstruction: moveToInstructionsPanel,
@@ -43,6 +44,7 @@
         resetMetricsHistory: resetMetricsHistory,
         downloadMetricsHistory: downloadResults,
         setInstructions: setInstructionText,
+        setInstructionsImage: setInstructionImage,
         setButtonText: setButtonText,
         updateScorePlaceholderText: updateScoreInInstructionText,
       });
@@ -57,6 +59,7 @@
         gui_tab_experiment = document.getElementById("floden-gui-experiment-tab");
         gui_tab_instructions = document.getElementById("floden-gui-instructions-tab");
         gui_instructions_text_element = document.getElementById("floden-gui-instructions-text");
+        gui_instructions_img_element = document.getElementById("floden-gui-instructions-img");
         gui_instructions_button_element = document.getElementById("floden-gui-instructions-btn");
         // Initialize Instructions Text Formatting
         gui_instructions_text_element_font_size = Math.ceil(0.05*window.innerHeight);
@@ -74,7 +77,7 @@
             num_cards_shown = folden_task.card_array.filter((card) => card.shown).length;
           }
           folden_task_current_pts_element.innerHTML = `$$ available now: ${FLODEN_TASK_SCORE[num_cards_shown]}`;
-        }, 200);
+        }, 30);
         state_machine.resetState();
       };
 
@@ -93,6 +96,10 @@
       function setInstructionText(text) {
         gui_instructions_text_element.innerHTML = text;
         setTimeout(() => updateInstructionTextFit(), 5);
+      }
+
+      function setInstructionImage(innerHtml) {
+        gui_instructions_img_element.innerHTML = innerHtml;
       }
 
       function setButtonText(text) {
@@ -206,7 +213,7 @@
         height: 10vh;
       }
       #floden-gui-instructions-text {
-        height: 60vh;
+        height: 30vh;
         width: 100%;
       }
     </style>
@@ -219,10 +226,12 @@
       </div>
 
       <div class="mdl-tabs__panel" id="floden-gui-instructions-panel" style="height: 100%; width: 100%; background-image: url('img/instructions_background.png');">
-        <div class="mdl-grid center-items" style="height: 80vh; padding-top: 0; padding-bottom: 0;">
-          <div class="mdl-cell mdl-cell--3-col center-items" id="floden-gui-instructions-text" style="margin-top: 15vh;padding-left: 5vw;padding-right: 5vw;">
+        <div class="mdl-grid center-items" style="height: 40vh; padding-top: 0; padding-bottom: 0;">
+          <div class="mdl-cell mdl-cell--3-col center-items" id="floden-gui-instructions-text" style="margin-top: 10vh;padding-left: 5vw;padding-right: 5vw;">
             Hello world, lorem ipsum dolores et.
           </div>
+        </div>
+        <div class="mdl-grid center-items" style="height: 40vh; padding-top: 0; padding-bottom: 2vh;" id="floden-gui-instructions-img">
         </div>
         <div class="mdl-grid center-items" style="height: 20vh; padding-top: 0; padding-bottom: 0;">
           <div class="mdl-cell mdl-cell--6-col mdl-typography--text-center" style="padding-top: 0;">

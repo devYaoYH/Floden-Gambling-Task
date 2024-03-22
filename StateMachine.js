@@ -1,7 +1,7 @@
-const NUM_PRACTICE_GAMES = 5;
-const NUM_EXPT_GAMES = 20;
-const SHORT_ITI = 2000;
-const LONG_ITI = 10000;
+const NUM_PRACTICE_GAMES = 1; //5;
+const NUM_EXPT_GAMES = 1; //20;
+const SHORT_ITI = 1000; //2000;
+const LONG_ITI = 1000; //10000;
 
 const IMG_FORWARDS_GAME = 'img/FORWARDS.JPG';
 const IMG_BACKWARDS_GAME = 'img/BACKWARDS.JPG';
@@ -19,14 +19,11 @@ const TRIAL_BLOCK_SEQUENCE = [
   // Start screen.
   {
     instruction_text: `
-      You will begin by playing the game forward.<br>
-      Cards will appear on the screen one at a time.<br>
-      Press the "TURN OVER" button to stop the dealer.<br>
-      You win if the WIN card is in your hand when you turn them over.<br>
+      Press below to begin the card game.
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
-    button_text: "PRESS TO CONTINUE",
+    button_text: "START",
   },
   {
     instruction_text: `
@@ -41,16 +38,20 @@ const TRIAL_BLOCK_SEQUENCE = [
     instruction_text: `
       First we will play the game FORWARD.<br>
       One card at a time will appear on the screen until you press "TURN OVER".<br>
-      <div class="mdl-typography--text-center"><img src="${IMG_FORWARDS_GAME}" style="height:35vh;"/></div>
       That will stop the dealer and turn over your cards.<br>
+    `,
+    instruction_image: `
+      <div class="mdl-typography--text-center"><img src="${IMG_FORWARDS_GAME}" style="height:100%; border-style: inset;"/></div>
     `,
     expt_args: null,
     button_text: "PRESS TO CONTINUE"
   },
   {
     instruction_text: `
-      You will win $$ if you have a WIN card at that time.<br><br>
-      <div class="mdl-typography--text-center"><img src="${IMG_CARDS}" style="height:40vh;"/></div>
+      You will win $$ if you have a WIN card at that time.<br>
+    `,
+    instruction_image: `
+      <div class="mdl-typography--text-center"><img src="${IMG_CARDS}" style="height:100%; border-style: inset;"/></div>
     `,
     expt_args: null,
     button_text: "PRESS TO CONTINUE"
@@ -67,7 +68,9 @@ const TRIAL_BLOCK_SEQUENCE = [
   {
     instruction_text: `
       In the top left corner, you can see how much $$ you would win if you have a WIN card among the cards currently on the screen.<br>
-      <div class="mdl-typography--text-center"><img src="${IMG_UI_CURRENT_SCORE}" style="height:50vh;"/></div>
+    `,
+    instruction_image: `
+      <div class="mdl-typography--text-center"><img src="${IMG_UI_CURRENT_SCORE}" style="height:100%; border-style: inset;"/></div>
     `,
     expt_args: null,
     button_text: "PRESS TO CONTINUE"
@@ -75,7 +78,9 @@ const TRIAL_BLOCK_SEQUENCE = [
   {
     instruction_text: `
       In the top right corner, you can see your total winnings now.<br>
-      <div class="mdl-typography--text-center"><img src="${IMG_UI_TOTAL_SCORE}" style="height:50vh;"/></div>
+    `,
+    instruction_image: `
+      <div class="mdl-typography--text-center"><img src="${IMG_UI_TOTAL_SCORE}" style="height:100%; border-style: inset;"/></div>
     `,
     expt_args: null,
     button_text: "PRESS TO CONTINUE"
@@ -99,8 +104,10 @@ const TRIAL_BLOCK_SEQUENCE = [
     instruction_text: `
       Now you will practice playing the game BACKWARDS.<br>
       You will start with five cards.<br>
-      <div class="mdl-typography--text-center"><img src="${IMG_BACKWARDS_GAME}" style="height:35vh;"/></div>
       They vanish one at a time until you press "TURN OVER".<br>
+    `,
+    instruction_image: `
+      <div class="mdl-typography--text-center"><img src="${IMG_BACKWARDS_GAME}" style="height:100%; border-style: inset;"/></div>
     `,
     expt_args: null,
     button_text: "PRESS TO CONTINUE"
@@ -130,9 +137,9 @@ const TRIAL_BLOCK_SEQUENCE = [
   // Synthetic: Reset Experiment Metrics (to clear practice trials).
   {
     instruction_text: `
-      You have completed the practice trials.<br>
-      You can now begin the experimental trials.<br>
-      There will be a total of FOUR sets of games.<br>
+      You have completed the practice games.<br>
+      You can now begin the experimental games.<br>
+      There will be a total of FOUR sets of games, two forward, and two backward.<br>
     `,
     expt_args: null,
     additional_fn: [INSTRUCTION_STATE_FN_ENUM.RESET],
@@ -261,6 +268,12 @@ const InitState = (function(fsm, index) {
 
       console.log("Populate instructions.");
       this.fsm.setInstruction(TRIAL_BLOCK_SEQUENCE[index].instruction_text);
+      if (TRIAL_BLOCK_SEQUENCE[index].instruction_image !== undefined) {
+        this.fsm.setInstructionImage(TRIAL_BLOCK_SEQUENCE[index].instruction_image);
+      }
+      else {
+        this.fsm.setInstructionImage("");
+      }
       this.fsm.setButtonText(TRIAL_BLOCK_SEQUENCE[index].button_text);
 
       var additional_fn = TRIAL_BLOCK_SEQUENCE[index].additional_fn;
@@ -347,6 +360,9 @@ const StateMachine = (function(floden_task, gui_interface) {
     },
     setInstruction: function(text) {
       gui_interface.setInstructions(text);
+    },
+    setInstructionImage: function(innerHtml) {
+      gui_interface.setInstructionsImage(innerHtml);
     },
     setButtonText: function(text) {
       gui_interface.setButtonText(text);

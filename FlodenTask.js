@@ -69,6 +69,11 @@ const ScoreMetric = (function(task_obj) {
     name: "Score",
     description: "Total numeric score accumulated from this trial.",
     compute: function() {
+      // Return 0 score if subject did not perform an action.
+      if (task_obj.has_expired) {
+        this.value = 0;
+        return;
+      }
       num_revealed = 0;
       winning_card_shown = false;
       for (let i=0;i<FLODEN_TASK_NUM_CARDS;i++) {
@@ -204,6 +209,10 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
   // ADD condition
   function addCard(task_obj, num_shown) {
     console.log(`Showing card: ${num_shown}`);
+    if (task_obj.has_started) {
+      // When there is at least 1 card and the task is started, enable button.
+      gui_interface.enableBtn();
+    }
     if (num_shown == FLODEN_TASK_NUM_CARDS) {
       task_obj.has_expired = true;
       gui_interface.submitTrialFn();
@@ -266,7 +275,13 @@ const FlodenTask = (function(is_addition_task, gui_interface) {
         console.log("Error: reset current trial first.");
         return;
       }
-      gui_interface.enableBtn();
+      // Button should only be initially enable when in SUB condition.
+      if (this.is_add_condition === true) {
+        gui_interface.disableBtn();
+      }
+      else {
+        gui_interface.enableBtn();
+      }
       console.log("Starting trial...");
       this.metrics_array.push(LatencyMetric(getTimestampNow()));
       this.metrics_array.push(CorrectnessMetric(this));
